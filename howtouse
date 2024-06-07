@@ -18,8 +18,10 @@ tab:CreateButton("button", function()
   print("button pressed")
 end)
 
+wait(2.5)
+
 local InputService = game:GetService('UserInputService')
-local frame = CoreGui.EngoUI
+local frame = game.CoreGui.EngoUI.Main
 local dragging = nil
 local speed = 0.1
 local startPosition = nil
@@ -56,5 +58,3 @@ InputService.InputChanged:Connect(function(input)
         end
     end
 end)
-
--- other functions are self-explanatory based on the current ones listed 
