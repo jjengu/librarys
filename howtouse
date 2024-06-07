@@ -2,7 +2,7 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pstrw
 
 local main = library:CreateMain("name", "", Enum.KeyCode.LeftAlt) -- keybind
 
-local tab = main:CreateTab("Combat")
+local tab = main:CreateTab("tab1")
   
 tab:CreateLabel("Reach")
   
@@ -15,7 +15,7 @@ tab:CreateSlider("slider", 0, 90, function(value)
 end)
 
 tab:CreateButton("button", function()
-  print("button pressed"
+  print("button pressed")
 end)
 
 -- other functions are self explanitory based on the current ones listed 
