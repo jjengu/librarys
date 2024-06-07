@@ -1,4 +1,4 @@
-local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pstrw/EngoUi/main/engoui.lua", true))()", true))()
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pstrw/EngoUi/main/engoui.lua"))()
 
 local main = library:CreateMain("name", "", Enum.KeyCode.LeftAlt) -- keybind
 
@@ -18,4 +18,4 @@ tab:CreateButton("button", function()
   print("button pressed")
 end)
 
--- other functions are self explanitory based on the current ones listed 
+-- other functions are self-explanatory based on the current ones listed 
