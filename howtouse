@@ -1,4 +1,4 @@
-local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pstrw/EngoUi/main/engoui.lua"))()
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Pstrw/EngoUi/main/engo.lua"))()
 
 local main = library:CreateMain("name", "", Enum.KeyCode.LeftAlt) -- keybind
 
