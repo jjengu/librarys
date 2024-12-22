@@ -1,4 +1,4 @@
-local Player = game.Players.LocalPlayer
+local Player = game:GetService("Players").LocalPlayer
 local Mouse = Player:GetMouse()
 
 local TweenService = game:GetService("TweenService")
