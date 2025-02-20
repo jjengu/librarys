@@ -156,19 +156,21 @@ do
 	end
 	
 	function utility:DraggingEnabled(frame, parent)
-	
 		parent = parent or frame
-		
-		-- stolen from wally or kiriot, kek
 		local dragging = false
-		local dragInput, mousePos, framePos
-
+		local dragInput, startPos, objPos
+	
+		local function update(input)
+			local delta = input.Position - startPos
+			parent.Position = UDim2.new(objPos.X.Scale, objPos.X.Offset + delta.X, objPos.Y.Scale, objPos.Y.Offset + delta.Y)
+		end
+	
 		frame.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 				dragging = true
-				mousePos = input.Position
-				framePos = parent.Position
-				
+				startPos = input.Position
+				objPos = parent.Position
+	
 				input.Changed:Connect(function()
 					if input.UserInputState == Enum.UserInputState.End then
 						dragging = false
@@ -176,21 +178,20 @@ do
 				end)
 			end
 		end)
-
+	
 		frame.InputChanged:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseMovement then
+			if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 				dragInput = input
 			end
 		end)
-
+	
 		input.InputChanged:Connect(function(input)
 			if input == dragInput and dragging then
-				local delta = input.Position - mousePos
-				parent.Position  = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+				update(input)
 			end
 		end)
-
 	end
+	
 	
 	function utility:DraggingEnded(callback)
 		table.insert(self.ended, callback)
@@ -1643,21 +1644,27 @@ do
 			dragging = false
 		end)
 
-		slider.MouseButton1Down:Connect(function(input)
-			dragging = true
-			
-			while dragging do
+		slider.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				dragging = true
 				utility:Tween(circle, {ImageTransparency = 0}, 0.1)
-				
-				value = self:updateSlider(slider, nil, nil, min, max, value)
-				callback(value)
-				
-				utility:Wait()
+		
+				local connection
+				connection = input.Changed:Connect(function()
+					if input.UserInputState == Enum.UserInputState.End then
+						dragging = false
+						utility:Tween(circle, {ImageTransparency = 1}, 0.2)
+						connection:Disconnect()
+					end
+				end)
+		
+				while dragging do
+					value = self:updateSlider(slider, nil, nil, min, max, value)
+					callback(value)
+					utility:Wait()
+				end
 			end
-			
-			wait(0.5)
-			utility:Tween(circle, {ImageTransparency = 1}, 0.2)
-		end)
+		end)		
 		
 		textbox.FocusLost:Connect(function()
 			if not tonumber(textbox.Text) then
