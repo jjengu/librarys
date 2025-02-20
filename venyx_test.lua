@@ -1647,23 +1647,24 @@ do
 		slider.InputBegan:Connect(function(input)
 			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 				dragging = true
+				utility:Tween(circle, {ImageTransparency = 0}, 0.1)
+		
+				local connection
+				connection = input.Changed:Connect(function()
+					if input.UserInputState == Enum.UserInputState.End then
+						dragging = false
+						utility:Tween(circle, {ImageTransparency = 1}, 0.2)
+						connection:Disconnect()
+					end
+				end)
+		
 				while dragging do
-					utility:Tween(circle, {ImageTransparency = 0}, 0.1)
-					
 					value = self:updateSlider(slider, nil, nil, min, max, value)
 					callback(value)
-					
 					utility:Wait()
 				end
 			end
-		end)
-		
-		slider.InputEnded:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-				dragging = false
-				utility:Tween(circle, {ImageTransparency = 1}, 0.2)
-			end
-		end)
+		end)		
 		
 		textbox.FocusLost:Connect(function()
 			if not tonumber(textbox.Text) then
