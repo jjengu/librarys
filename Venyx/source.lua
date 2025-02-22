@@ -1,3 +1,6 @@
+-- all credits to dino!!!
+-- also i fixed the src it now works on mobile!!!! (fixed slider and drag)
+
 -- init
 local player = game.Players.LocalPlayer
 local mouse = player:GetMouse()
