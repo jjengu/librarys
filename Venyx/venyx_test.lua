@@ -208,6 +208,8 @@ local library = {} -- main
 local page = {}
 local section = {}
 
+local main
+
 local function UpdateSize(instance)
     local screen = game:GetService("Workspace").CurrentCamera.ViewportSize
 
@@ -236,7 +238,7 @@ do
 			Parent = game.CoreGui
 		})
 	
-		local main = utility:Create("ImageLabel", {
+		main = utility:Create("ImageLabel", {
 			Name = "Main",
 			BackgroundTransparency = 1,
 			Size = UDim2.new(0, 511, 0, 428),
@@ -2204,9 +2206,8 @@ do
 	end
 
 	task.spawn(function()
-		wait(2)
 		while task.wait(2.5) do
-			UpdateSize(container.Main)
+			UpdateSize(main)
 		end
 	end)
 end
