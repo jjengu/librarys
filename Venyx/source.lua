@@ -1,5 +1,13 @@
--- all credits to dino!!!
--- also i fixed the src it now works on mobile!!!! (fixed slider and drag)
+--[[
+all credits to dino!!! 
+edited by jengu
+
+
+there is resize thing but i disbaled it scroll to the bottom to see
+ui now auto go s to the middle of the screen instead of where it used to
+fixed sliders on mobile
+fixed drag on mobile
+]]
 
 -- init
 local player = game.Players.LocalPlayer
@@ -208,6 +216,23 @@ local library = {} -- main
 local page = {}
 local section = {}
 
+local main
+
+local function UpdateSize(instance)
+    local screen = game:GetService("Workspace").CurrentCamera.ViewportSize
+
+    local width = 511 / 1920 * screen.X
+    local height = 428 / 1080 * screen.Y
+
+    local minWidth, minHeight = 400, 350
+    local maxWidth, maxHeight = 700, 600 
+
+    width = math.clamp(width, minWidth, maxWidth)
+    height = math.clamp(height, minHeight, maxHeight)
+
+    instance.Size = UDim2.new(0, width, 0, height)
+end
+
 do
 	library.__index = library
 	page.__index = page
@@ -219,93 +244,105 @@ do
 		local container = utility:Create("ScreenGui", {
 			Name = title,
 			Parent = game.CoreGui
-		}, {
-			utility:Create("ImageLabel", {
-				Name = "Main",
-				BackgroundTransparency = 1,
-				Position = UDim2.new(0.25, 0, 0.052435593, 0),
-				Size = UDim2.new(0, 511, 0, 428),
-				Image = "rbxassetid://4641149554",
-				ImageColor3 = themes.Background,
-				ScaleType = Enum.ScaleType.Slice,
-				SliceCenter = Rect.new(4, 4, 296, 296)
-			}, {
-				utility:Create("ImageLabel", {
-					Name = "Glow",
-					BackgroundTransparency = 1,
-					Position = UDim2.new(0, -15, 0, -15),
-					Size = UDim2.new(1, 30, 1, 30),
-					ZIndex = 0,
-					Image = "rbxassetid://5028857084",
-					ImageColor3 = themes.Glow,
-					ScaleType = Enum.ScaleType.Slice,
-					SliceCenter = Rect.new(24, 24, 276, 276)
-				}),
-				utility:Create("ImageLabel", {
-					Name = "Pages",
-					BackgroundTransparency = 1,
-					ClipsDescendants = true,
-					Position = UDim2.new(0, 0, 0, 38),
-					Size = UDim2.new(0, 126, 1, -38),
-					ZIndex = 3,
-					Image = "rbxassetid://5012534273",
-					ImageColor3 = themes.DarkContrast,
-					ScaleType = Enum.ScaleType.Slice,
-					SliceCenter = Rect.new(4, 4, 296, 296)
-				}, {
-					utility:Create("ScrollingFrame", {
-						Name = "Pages_Container",
-						Active = true,
-						BackgroundTransparency = 1,
-						Position = UDim2.new(0, 0, 0, 10),
-						Size = UDim2.new(1, 0, 1, -20),
-						CanvasSize = UDim2.new(0, 0, 0, 314),
-						ScrollBarThickness = 0
-					}, {
-						utility:Create("UIListLayout", {
-							SortOrder = Enum.SortOrder.LayoutOrder,
-							Padding = UDim.new(0, 10)
-						})
-					})
-				}),
-				utility:Create("ImageLabel", {
-					Name = "TopBar",
-					BackgroundTransparency = 1,
-					ClipsDescendants = true,
-					Size = UDim2.new(1, 0, 0, 38),
-					ZIndex = 5,
-					Image = "rbxassetid://4595286933",
-					ImageColor3 = themes.Accent,
-					ScaleType = Enum.ScaleType.Slice,
-					SliceCenter = Rect.new(4, 4, 296, 296)
-				}, {
-					utility:Create("TextLabel", { -- title
-						Name = "Title",
-						AnchorPoint = Vector2.new(0, 0.5),
-						BackgroundTransparency = 1,
-						Position = UDim2.new(0, 12, 0, 19),
-						Size = UDim2.new(1, -46, 0, 16),
-						ZIndex = 5,
-						Font = Enum.Font.GothamBold,
-						Text = title,
-						TextColor3 = themes.TextColor,
-						TextSize = 14,
-						TextXAlignment = Enum.TextXAlignment.Left
-					})
-				})
-			})
 		})
-		
+	
+		main = utility:Create("ImageLabel", {
+			Name = "Main",
+			BackgroundTransparency = 1,
+			Size = UDim2.new(0, 511, 0, 428),
+			Image = "rbxassetid://4641149554",
+			ImageColor3 = themes.Background,
+			ScaleType = Enum.ScaleType.Slice,
+			SliceCenter = Rect.new(4, 4, 296, 296),
+			Parent = container
+		})
+	
+		-- Set Position AFTER Size is defined to properly center it
+		main.Position = UDim2.new(0.5, -main.Size.X.Offset / 2, 0.5, -main.Size.Y.Offset / 2)
+	
+		local glow = utility:Create("ImageLabel", {
+			Name = "Glow",
+			BackgroundTransparency = 1,
+			Position = UDim2.new(0, -15, 0, -15),
+			Size = UDim2.new(1, 30, 1, 30),
+			ZIndex = 0,
+			Image = "rbxassetid://5028857084",
+			ImageColor3 = themes.Glow,
+			ScaleType = Enum.ScaleType.Slice,
+			SliceCenter = Rect.new(24, 24, 276, 276),
+			Parent = main
+		})
+	
+		local pages = utility:Create("ImageLabel", {
+			Name = "Pages",
+			BackgroundTransparency = 1,
+			ClipsDescendants = true,
+			Position = UDim2.new(0, 0, 0, 38),
+			Size = UDim2.new(0, 126, 1, -38),
+			ZIndex = 3,
+			Image = "rbxassetid://5012534273",
+			ImageColor3 = themes.DarkContrast,
+			ScaleType = Enum.ScaleType.Slice,
+			SliceCenter = Rect.new(4, 4, 296, 296),
+			Parent = main
+		})
+	
+		local pagesContainer = utility:Create("ScrollingFrame", {
+			Name = "Pages_Container",
+			Active = true,
+			BackgroundTransparency = 1,
+			Position = UDim2.new(0, 0, 0, 10),
+			Size = UDim2.new(1, 0, 1, -20),
+			CanvasSize = UDim2.new(0, 0, 0, 314),
+			ScrollBarThickness = 0,
+			Parent = pages
+		})
+	
+		local listLayout = utility:Create("UIListLayout", {
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			Padding = UDim.new(0, 10),
+			Parent = pagesContainer
+		})
+	
+		local topBar = utility:Create("ImageLabel", {
+			Name = "TopBar",
+			BackgroundTransparency = 1,
+			ClipsDescendants = true,
+			Size = UDim2.new(1, 0, 0, 38),
+			ZIndex = 5,
+			Image = "rbxassetid://4595286933",
+			ImageColor3 = themes.Accent,
+			ScaleType = Enum.ScaleType.Slice,
+			SliceCenter = Rect.new(4, 4, 296, 296),
+			Parent = main
+		})
+	
+		local titleLabel = utility:Create("TextLabel", {
+			Name = "Title",
+			AnchorPoint = Vector2.new(0, 0.5),
+			BackgroundTransparency = 1,
+			Position = UDim2.new(0, 12, 0, 19),
+			Size = UDim2.new(1, -46, 0, 16),
+			ZIndex = 5,
+			Font = Enum.Font.GothamBold,
+			Text = title,
+			TextColor3 = themes.TextColor,
+			TextSize = 14,
+			TextXAlignment = Enum.TextXAlignment.Left,
+			Parent = topBar
+		})
+	
+		-- Initialize Keybinds and enable dragging for the TopBar
 		utility:InitializeKeybind()
-		utility:DraggingEnabled(container.Main.TopBar, container.Main)
-		
+		utility:DraggingEnabled(topBar, main)
+	
 		return setmetatable({
 			container = container,
-			pagesContainer = container.Main.Pages.Pages_Container,
+			pagesContainer = pagesContainer,
 			pages = {}
 		}, library)
-	end
-	
+	end	
+
 	function page.new(library, title, icon)
 		local button = utility:Create("TextButton", {
 			Name = title,
@@ -2175,6 +2212,13 @@ do
 			frame.ScrollBarImageTransparency = 1
 		end
 	end
+
+	task.spawn(function()
+		while task.wait(.1) do
+			--UpdateSize(main)
+			-- do this if u want it to resize based on screenzie idk if it looks well on mobile # jengu
+		end
+	end)
 end
 
 return library
