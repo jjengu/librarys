@@ -1,5 +1,13 @@
--- all credits to dino!!!
--- also i fixed the src it now works on mobile!!!! (fixed slider and drag)
+--[[
+all credits to dino!!! 
+edited by jengu
+
+
+there is resize thing but i disbaled it scroll to the bottom to see
+ui now auto go s to the middle of the screen instead of where it used to
+fixed sliders on mobile
+fixed drag on mobile
+]]
 
 -- init
 local player = game.Players.LocalPlayer
@@ -2206,8 +2214,9 @@ do
 	end
 
 	task.spawn(function()
-		while task.wait(2.5) do
-			UpdateSize(main)
+		while task.wait(.1) do
+			--UpdateSize(main)
+			-- do this if u want it to resize based on screenzie idk if it looks well on mobile # jengu
 		end
 	end)
 end
