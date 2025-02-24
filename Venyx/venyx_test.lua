@@ -2204,6 +2204,7 @@ do
 	end
 
 	task.spawn(function()
+		wait(2)
 		while task.wait(2.5) do
 			UpdateSize(container.Main)
 		end
