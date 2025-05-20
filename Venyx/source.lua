@@ -1957,13 +1957,16 @@ do
 		end
 		
 		self.container.CanvasSize = UDim2.new(0, 0, 0, size)
-		self.container.ScrollBarImageTransparency = size > self.container.AbsoluteSize.Y
+		
+		pcall(function()
+			self.container.ScrollBarImageTransparency = size > self.container.AbsoluteSize.Y
+		end)
 		
 		if scroll then
 			utility:Tween(self.container, {CanvasPosition = Vector2.new(0, self.lastPosition or 0)}, 0.2)
 		end
 	end
-	
+
 	function section:Resize(smooth)
 	
 		if self.page.library.focusedPage ~= self.page then
