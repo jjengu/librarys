@@ -2140,60 +2140,68 @@ do
 	end
 	
 	function section:updateDropdown(dropdown, title, list, callback)
-		dropdown = self:getModule(dropdown)
-		
-		if title then
-			dropdown.Search.TextBox.Text = title
-		end
-		
-		local entries = 0
-		
-		utility:Pop(dropdown.Search, 10)
-		
-		for i, button in pairs(dropdown.List.Frame:GetChildren()) do
-			if button:IsA("ImageButton") then
-				button:Destroy()
-			end
-		end
-			
-		for i, value in pairs(list or {}) do
-			local button = utility:Create("ImageButton", {
-				Parent = dropdown.List.Frame,
-				BackgroundTransparency = 1,
-				BorderSizePixel = 0,
-				Size = UDim2.new(1, 0, 0, 30),
-				ZIndex = 2,
-				Image = "rbxassetid://5028857472",
-				ImageColor3 = themes.DarkContrast,
-				ScaleType = Enum.ScaleType.Slice,
-				SliceCenter = Rect.new(2, 2, 298, 298)
-			}, {
-				utility:Create("TextLabel", {
-					BackgroundTransparency = 1,
-					Position = UDim2.new(0, 10, 0, 0),
-					Size = UDim2.new(1, -10, 1, 0),
-					ZIndex = 3,
-					Font = Enum.Font.Gotham,
-					Text = value,
-					TextColor3 = themes.TextColor,
-					TextSize = 12,
-					TextXAlignment = "Left",
-					TextTransparency = 0.10000000149012
-				})
-			})
-			
-			button.MouseButton1Click:Connect(function()
-				if callback then
-					callback(value, function(...)
-						self:updateDropdown(dropdown, ...)
-					end)	
-				end
+    dropdown = self:getModule(dropdown)
 
-				self:updateDropdown(dropdown, value, nil, callback)
-			end)
-			
-			entries = entries + 1
-		end
+    if title then
+        dropdown.Search.TextBox.Text = title
+    end
+
+    -- Update internal list & callback so changes persist
+    if list then
+        dropdown.ListValues = list
+    end
+
+    if callback then
+        dropdown.Callback = callback
+    end
+
+    -- Redraw the list UI
+    utility:Pop(dropdown.Search, 10)
+    
+    for i, button in pairs(dropdown.List.Frame:GetChildren()) do
+        if button:IsA("ImageButton") then
+            button:Destroy()
+        end
+    end
+
+    for i, value in pairs(dropdown.ListValues or {}) do
+        local button = utility:Create("ImageButton", {
+            Parent = dropdown.List.Frame,
+            BackgroundTransparency = 1,
+            BorderSizePixel = 0,
+            Size = UDim2.new(1, 0, 0, 30),
+            ZIndex = 2,
+            Image = "rbxassetid://5028857472",
+            ImageColor3 = themes.DarkContrast,
+            ScaleType = Enum.ScaleType.Slice,
+            SliceCenter = Rect.new(2, 2, 298, 298)
+        }, {
+            utility:Create("TextLabel", {
+                BackgroundTransparency = 1,
+                Position = UDim2.new(0, 10, 0, 0),
+                Size = UDim2.new(1, -10, 1, 0),
+                ZIndex = 3,
+                Font = Enum.Font.Gotham,
+                Text = tostring(value),
+                TextColor3 = themes.TextColor,
+                TextSize = 12,
+                TextXAlignment = "Left",
+                TextTransparency = 0.1
+            })
+        })
+
+        button.MouseButton1Click:Connect(function()
+            if dropdown.Callback then
+                dropdown.Callback(value, function(...)
+                    self:updateDropdown(dropdown, ...)
+                end)
+            end
+
+            self:updateDropdown(dropdown, value, nil, dropdown.Callback)
+        end)
+    end
+end
+
 		
 		local frame = dropdown.List.Frame
 		
