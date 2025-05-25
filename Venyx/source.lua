@@ -2139,32 +2139,39 @@ do
 		return value
 	end
 	
-	function section:updateDropdown(dropdown, title, list, callback)
+function section:updateDropdown(dropdown, title, list, callback)
     dropdown = self:getModule(dropdown)
 
+    -- Update title if provided
     if title then
         dropdown.Search.TextBox.Text = title
     end
 
-    -- Update internal list & callback so changes persist
+    -- Update internal list if provided, otherwise keep old
     if list then
         dropdown.ListValues = list
     end
 
+    -- Update internal callback if provided, otherwise keep old
     if callback then
         dropdown.Callback = callback
     end
 
-    -- Redraw the list UI
+    -- Use stored list and callback
+    local values = dropdown.ListValues or {}
+    local cb = dropdown.Callback
+
+    -- Clear previous entries UI
     utility:Pop(dropdown.Search, 10)
-    
-    for i, button in pairs(dropdown.List.Frame:GetChildren()) do
+
+    for _, button in pairs(dropdown.List.Frame:GetChildren()) do
         if button:IsA("ImageButton") then
             button:Destroy()
         end
     end
 
-    for i, value in pairs(dropdown.ListValues or {}) do
+    local entries = 0
+    for _, value in pairs(values) do
         local button = utility:Create("ImageButton", {
             Parent = dropdown.List.Frame,
             BackgroundTransparency = 1,
@@ -2191,15 +2198,20 @@ do
         })
 
         button.MouseButton1Click:Connect(function()
-            if dropdown.Callback then
-                dropdown.Callback(value, function(...)
+            if cb then
+                cb(value, function(...)
                     self:updateDropdown(dropdown, ...)
                 end)
             end
-
-            self:updateDropdown(dropdown, value, nil, dropdown.Callback)
+            self:updateDropdown(dropdown, value, nil, cb)
         end)
+
+        entries = entries + 1
     end
+
+    -- Optionally resize the dropdown list frame to fit entries
+    local listFrame = dropdown.List.Frame
+    listFrame.Size = UDim2.new(1, 0, 0, entries * 30)
 end
 
 		
