@@ -2219,7 +2219,7 @@ do
 	task.spawn(function()
 		while task.wait(.1) do
 			--UpdateSize(main)
-			-- do this if u want it to resize based on screenzie idk if it looks well on mobile # jengu
+			-- do this if u want it to resize based on screenzie idk if it alooks well on mobile # jengu
 		end
 	end)
 end
