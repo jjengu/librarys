@@ -1,4 +1,4 @@
-local Notify = loadstring(game:HttpGet("https://pastebin.com/raw/uW8sGTpF"))()
+local Notify = loadstring(game:HttpGet("https://raw.githubusercontent.com/jjengu/librarys/refs/heads/main/Notification/stfo_notif/source.lua"))()
 
 Notify({
     Message = "stfo notifcation ui ported by @_jengu!",
