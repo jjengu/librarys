@@ -25,6 +25,7 @@ if not game:GetService("CoreGui"):FindFirstChild("NotifsUI") then
 	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 	UIListLayout.Parent = Notifications
 
+
 	local Notification_Example = Instance.new("TextLabel")
 	Notification_Example.Name = "Notification_Template"
 	Notification_Example.Size = UDim2.new(0, 200, 0, 30)
@@ -39,6 +40,23 @@ if not game:GetService("CoreGui"):FindFirstChild("NotifsUI") then
 	Notification_Example.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
 	Notification_Example.TextWrapped = true
 	Notification_Example.Parent = game:GetService("CoreGui")
+
+	--[[local Shadow = Instance.new("ImageLabel")
+	Shadow.Name = "Shadow"
+	Shadow.Position = UDim2.new(0.5, 0, 0.5, 3)
+	Shadow.Size = UDim2.new(1, 6, 1, 6)
+	Shadow.BackgroundColor3 = Color3.new(1, 1, 1)
+	Shadow.BackgroundTransparency = 1
+	Shadow.BorderColor3 = Color3.new(0.105882, 0.164706, 0.207843)
+	Shadow.ZIndex = -1
+	Shadow.AnchorPoint = Vector2.new(0.5, 0.5)
+	Shadow.Transparency = 1
+	Shadow.Image = "rbxassetid://1316045217"
+	Shadow.ImageColor3 = Color3.new(0, 0, 0)
+	Shadow.ImageTransparency = 1
+	Shadow.ScaleType = Enum.ScaleType.Slice
+	Shadow.Parent = Notification_Example]]
+
 
 	local UICorner = Instance.new("UICorner")
 	UICorner.Name = "UICorner"
@@ -57,7 +75,7 @@ local Notify = function(message, settings)
 
 		NTemplate.Font = Font
 		NTemplate.Text = message
-		NTemplate.Size = UDim2.fromOffset(NotifSize.X.Offset, 30)
+		NTemplate.Size = UDim2.fromOffset(NotifSize.X.Offset, 0)
 		NTemplate.TextColor3 = Color3.new(1, 1, 1)
 		NTemplate.TextStrokeTransparency = 1
 
@@ -69,7 +87,7 @@ local Notify = function(message, settings)
 			blue = Color3.fromRGB(0, 0, 255),
 			indigo = Color3.fromRGB(75, 0, 130),
 			violet = Color3.fromRGB(138, 43, 226),
-
+		
 			black = Color3.fromRGB(0, 0, 0),
 			white = Color3.fromRGB(255, 255, 255),
 			gray = Color3.fromRGB(128, 128, 128),
@@ -82,7 +100,7 @@ local Notify = function(message, settings)
 			gold = Color3.fromRGB(255, 189, 56),
 			silver = Color3.fromRGB(192, 192, 192),
 			peach = Color3.fromRGB(255, 218, 185),
-
+		
 			light_blue = Color3.fromRGB(173, 216, 230),
 			dark_green = Color3.fromRGB(0, 100, 0),
 			light_green = Color3.fromRGB(144, 238, 144),
@@ -91,7 +109,7 @@ local Notify = function(message, settings)
 			dark_red = Color3.fromRGB(139, 0, 0),
 			light_yellow = Color3.fromRGB(255, 255, 224),
 			dark_gray = Color3.fromRGB(64, 64, 64),
-
+		
 			pastel_red = Color3.fromRGB(255, 105, 97),
 			pastel_orange = Color3.fromRGB(255, 179, 71),
 			pastel_yellow = Color3.fromRGB(253, 253, 150),
@@ -106,7 +124,6 @@ local Notify = function(message, settings)
 		}
 
 		local BackgroundColor
-
 		if typeof(settings.Color) == "Color3" then
 			BackgroundColor = settings.Color
 		else
@@ -122,6 +139,11 @@ local Notify = function(message, settings)
 			BackgroundTransparency = 0
 		}):Play()
 
+		--[[TweenService:Create(NTemplate.Shadow, TweenInfo.new(1), {
+			ImageTransparency = 0.25
+		}):Play()]]
+
+
 		NTemplate.Parent = game:GetService("CoreGui"):FindFirstChild("NotifsUI").Notifications
 
 		task.delay(settings.Time or 5, function()
@@ -130,6 +152,10 @@ local Notify = function(message, settings)
 				TextStrokeTransparency = 1,
 				BackgroundTransparency = 1
 			}):Play()
+
+			--[[TweenService:Create(NTemplate.Shadow, TweenInfo.new(1), {
+				ImageTransparency =1
+			}):Play()]]
 
 			task.wait(1)
 			NTemplate:Destroy()
