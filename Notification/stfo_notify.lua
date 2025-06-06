@@ -79,10 +79,47 @@ local Notify = function(message, settings)
 		NTemplate.TextStrokeTransparency = 1
 
 		local Colors = {
+			red = Color3.fromRGB(255, 0, 0),
+			orange = Color3.fromRGB(255, 165, 0),
+			yellow = Color3.fromRGB(255, 255, 0),
+			green = Color3.fromRGB(0, 128, 0),
+			blue = Color3.fromRGB(0, 0, 255),
+			indigo = Color3.fromRGB(75, 0, 130),
+			violet = Color3.fromRGB(138, 43, 226),
+		
+			black = Color3.fromRGB(0, 0, 0),
+			white = Color3.fromRGB(255, 255, 255),
+			gray = Color3.fromRGB(128, 128, 128),
+			brown = Color3.fromRGB(139, 69, 19),
+			pink = Color3.fromRGB(255, 105, 180),
+			magenta = Color3.fromRGB(255, 0, 255),
+			cyan = Color3.fromRGB(0, 255, 255),
+			turquoise = Color3.fromRGB(64, 224, 208),
+			lime = Color3.fromRGB(191, 255, 0),
 			gold = Color3.fromRGB(255, 189, 56),
-			red = Color3.fromRGB(255, 79, 79),
-			green = Color3.fromRGB(143, 255, 112),
-			orange = Color3.fromRGB(255, 160, 82)
+			silver = Color3.fromRGB(192, 192, 192),
+			peach = Color3.fromRGB(255, 218, 185),
+		
+			light_blue = Color3.fromRGB(173, 216, 230),
+			dark_green = Color3.fromRGB(0, 100, 0),
+			light_green = Color3.fromRGB(144, 238, 144),
+			dark_blue = Color3.fromRGB(0, 0, 139),
+			light_pink = Color3.fromRGB(255, 182, 193),
+			dark_red = Color3.fromRGB(139, 0, 0),
+			light_yellow = Color3.fromRGB(255, 255, 224),
+			dark_gray = Color3.fromRGB(64, 64, 64),
+		
+			pastel_red = Color3.fromRGB(255, 105, 97),
+			pastel_orange = Color3.fromRGB(255, 179, 71),
+			pastel_yellow = Color3.fromRGB(253, 253, 150),
+			pastel_green = Color3.fromRGB(119, 221, 119),
+			pastel_blue = Color3.fromRGB(174, 198, 207),
+			pastel_indigo = Color3.fromRGB(178, 190, 181),
+			pastel_violet = Color3.fromRGB(203, 153, 201),
+			pastel_pink = Color3.fromRGB(255, 209, 220),
+			pastel_cyan = Color3.fromRGB(175, 238, 238),
+			pastel_lime = Color3.fromRGB(204, 255, 204),
+			pastel_peach = Color3.fromRGB(255, 218, 185)
 		}
 
 		local BackgroundColor = Colors[settings.Color] or Color3.fromRGB(143, 255, 112)
