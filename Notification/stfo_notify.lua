@@ -63,7 +63,7 @@ if not game:GetService("CoreGui"):FindFirstChild("NotifsUI") then
 	UICorner.Parent = Notification_Example
 end
 
-return local Notify = function(message, settings)
+local Notify = function(message, settings)
 	local CurrentTime = tick()
 	if CurrentTime - LastInteration >= 1 then
 		settings = settings or {}
@@ -85,7 +85,7 @@ return local Notify = function(message, settings)
 			orange = Color3.fromRGB(255, 160, 82)
 		}
 
-		local BackgroundColor = Colors[settings.Color] or Color3.new(0.188, 0.188, 0.188)
+		local BackgroundColor = Colors[settings.Color] or Color3.fromRGB(143, 255, 112)
 		NTemplate.BackgroundColor3 = BackgroundColor
 
 		TweenService:Create(NTemplate, TweenInfo.new(0.35), {
@@ -117,3 +117,7 @@ return local Notify = function(message, settings)
 		end)
 	end
 end
+
+return {
+    notify = Notify
+}
