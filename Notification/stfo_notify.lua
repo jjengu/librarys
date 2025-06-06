@@ -118,6 +118,4 @@ local Notify = function(message, settings)
 	end
 end
 
-return {
-    notify = Notify
-}
+return Notify
