@@ -51,7 +51,7 @@ local Notify = function(settings)
 
     local message = settings.Message or "Notification"
     local CurrentTime = tick()
-    if CurrentTime - LastInteration >= 1 then
+    --if CurrentTime - LastInteration >= 1 then
         LastInteration = CurrentTime
 
         local NTemplate = game:GetService("CoreGui"):FindFirstChild("Notification_Template"):Clone()
@@ -103,7 +103,7 @@ local Notify = function(settings)
             task.wait(1)
             NTemplate:Destroy()
         end)
-    end
+   -- end
 end
 
 return Notify
