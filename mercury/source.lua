@@ -1405,14 +1405,19 @@ function Library:toggle(options)
 		toggle()
 	end
 
-	function methods:SetState(state)
+	function methods:SetState(state, skipCallback)
 		toggled = state
 		if toggled then
 			offIcon:crossfade(onIcon, 0.1)
 		else
 			onIcon:crossfade(offIcon, 0.1)
 		end
-		task.spawn(function() options.Callback(toggled) end)
+	
+		if not skipCallback then
+			task.spawn(function()
+				options.Callback(toggled)
+			end)
+		end
 	end
 
 	if options.StartingState then methods:SetState(true) end
