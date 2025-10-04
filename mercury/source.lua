@@ -1276,13 +1276,26 @@ function Library:tab(options)
 end
 
 function Library:_resize_tab()
+	local layout = self.layout
+	local parentLayout = self.parentLayout
+
+	-- If layout doesn’t exist yet, safely exit
+	if not layout or not layout.AbsoluteContentSize then
+		return
+	end
+
 	if self.container.ClassName == "ScrollingFrame" then
-		self.container.CanvasSize = UDim2.fromOffset(0, self.layout.AbsoluteContentSize.Y + 20)
+		self.container.CanvasSize = UDim2.fromOffset(0, layout.AbsoluteContentSize.Y + 20)
 	else
-		self.sectionContainer.Size = UDim2.new(1, -24, 0, self.layout.AbsoluteContentSize.Y + 20)
-		self.parentContainer.CanvasSize = UDim2.fromOffset(0, self.parentLayout.AbsoluteContentSize.Y + 20)
+		self.sectionContainer.Size = UDim2.new(1, -24, 0, layout.AbsoluteContentSize.Y + 20)
+
+		-- Only resize parent if it exists
+		if self.parentContainer and parentLayout and parentLayout.AbsoluteContentSize then
+			self.parentContainer.CanvasSize = UDim2.fromOffset(0, parentLayout.AbsoluteContentSize.Y + 20)
+		end
 	end
 end
+
 
 function Library:toggle(options)
 	options = self:set_defaults({
