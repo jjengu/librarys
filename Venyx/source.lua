@@ -540,17 +540,18 @@ do
 	
 	-- new modules
 	
-	function library:Notify(title, text, callback)
+	function library:Notify(title, text, callback, duration, buttons)
+		local this = self
 	
-		-- overwrite last notification
-		if self.activeNotification then
-			self.activeNotification = self.activeNotification()
+		-- Overwrite last notification
+		if this.activeNotification then
+			this.activeNotification = this.activeNotification()
 		end
-		
-		-- standard create
+	
+		-- Create UI
 		local notification = utility:Create("ImageLabel", {
 			Name = "Notification",
-			Parent = self.container,
+			Parent = this.container,
 			BackgroundTransparency = 1,
 			Size = UDim2.new(0, 200, 0, 60),
 			Image = "rbxassetid://5028857472",
@@ -587,7 +588,7 @@ do
 				ZIndex = 4,
 				Font = Enum.Font.GothamSemibold,
 				TextColor3 = themes.TextColor,
-				TextSize = 14.000,
+				TextSize = 14,
 				TextXAlignment = Enum.TextXAlignment.Left
 			}),
 			utility:Create("TextLabel", {
@@ -598,7 +599,7 @@ do
 				ZIndex = 4,
 				Font = Enum.Font.Gotham,
 				TextColor3 = themes.TextColor,
-				TextSize = 12.000,
+				TextSize = 12,
 				TextXAlignment = Enum.TextXAlignment.Left
 			}),
 			utility:Create("ImageButton", {
@@ -608,7 +609,8 @@ do
 				Size = UDim2.new(0, 16, 0, 16),
 				Image = "rbxassetid://5012538259",
 				ImageColor3 = themes.TextColor,
-				ZIndex = 4
+				ZIndex = 4,
+				Visible = buttons ~= false
 			}),
 			utility:Create("ImageButton", {
 				Name = "Decline",
@@ -617,87 +619,84 @@ do
 				Size = UDim2.new(0, 16, 0, 16),
 				Image = "rbxassetid://5012538583",
 				ImageColor3 = themes.TextColor,
-				ZIndex = 4
+				ZIndex = 4,
+				Visible = buttons ~= false
 			})
 		})
-		
-		-- dragging
+	
+		-- Drag
 		utility:DraggingEnabled(notification)
-		
-		-- position and size
+	
+		-- Position and text
 		title = title or "Notification"
 		text = text or ""
-		
+	
 		notification.Title.Text = title
 		notification.Text.Text = text
-		
+	
 		local padding = 10
 		local textSize = game:GetService("TextService"):GetTextSize(text, 12, Enum.Font.Gotham, Vector2.new(math.huge, 16))
-		
-		notification.Position = library.lastNotification or UDim2.new(0, padding, 1, -(notification.AbsoluteSize.Y + padding))
+	
+		notification.Position = this.lastNotification or UDim2.new(0, padding, 1, -(notification.AbsoluteSize.Y + padding))
 		notification.Size = UDim2.new(0, 0, 0, 60)
-		
+	
 		utility:Tween(notification, {Size = UDim2.new(0, textSize.X + 70, 0, 60)}, 0.2)
-		wait(0.2)
-		
+		task.wait(0.2)
+	
 		notification.ClipsDescendants = false
 		utility:Tween(notification.Flash, {
 			Size = UDim2.new(0, 0, 0, 60),
 			Position = UDim2.new(1, 0, 0, 0)
 		}, 0.2)
-		
-		-- callbacks
+	
+		-- Close handler
 		local active = true
-		local close = function()
-		
-			if not active then
-				return
-			end
-			
+		local function close()
+			if not active then return end
 			active = false
+	
 			notification.ClipsDescendants = true
-			
-			library.lastNotification = notification.Position
+			this.lastNotification = notification.Position
+	
 			notification.Flash.Position = UDim2.new(0, 0, 0, 0)
 			utility:Tween(notification.Flash, {Size = UDim2.new(1, 0, 1, 0)}, 0.2)
-			
-			wait(0.2)
+			task.wait(0.2)
+	
 			utility:Tween(notification, {
 				Size = UDim2.new(0, 0, 0, 60),
 				Position = notification.Position + UDim2.new(0, textSize.X + 70, 0, 0)
 			}, 0.2)
-			
-			wait(0.2)
+			task.wait(0.2)
+	
 			notification:Destroy()
 		end
-		
-		self.activeNotification = close
-		
+	
+		this.activeNotification = close
+	
+		-- Button click handlers
 		notification.Accept.MouseButton1Click:Connect(function()
-		
-			if not active then 
-				return
-			end
-			
-			if callback then
-				callback(true)
-			end
-			
+			if not active then return end
+			if callback then callback(true) end
 			close()
 		end)
-		
+	
 		notification.Decline.MouseButton1Click:Connect(function()
-		
-			if not active then 
-				return
-			end
-			
-			if callback then
-				callback(false)
-			end
-			
+			if not active then return end
+			if callback then callback(false) end
 			close()
 		end)
+	
+		-- Auto close after duration
+		if duration then
+			task.delay(duration, function()
+				if active then
+					if callback and buttons == false then
+						callback(true) -- simulate accept for non-interactive message
+					end
+					close()
+				end
+			end)
+		end
 	end
 	
 	function section:addButton(title, callback)
