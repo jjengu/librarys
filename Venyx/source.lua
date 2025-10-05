@@ -1939,13 +1939,13 @@ do
 			for i, section in pairs(page.sections) do
 			
 				utility:Tween(section.container.Title, {TextTransparency = 0}, 0.1)
-				section:Resize(true)
+				--section:Resize(true)
 				
 				wait(0.05)
 			end
 			
 			wait(0.05)
-			page:Resize(true)
+			--page:Resize(true)
 		else
 			-- page button
 			button.Title.Font = Enum.Font.Gotham
