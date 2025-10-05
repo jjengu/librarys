@@ -1904,7 +1904,7 @@ do
 			local existingSections = focusedPage and #focusedPage.sections or 0
 			local sectionsRequired = #page.sections - existingSections
 			
-			page:Resize()
+			--page:Resize()
 			
 			for i, section in pairs(page.sections) do
 				section.container.Parent.ImageTransparency = 0
