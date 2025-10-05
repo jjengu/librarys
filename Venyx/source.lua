@@ -8,7 +8,7 @@ ui now auto go s to the middle of the screen instead of where it used to
 fixed sliders on mobile
 fixed drag on mobile
 ]]
-print("46246246246246246")
+print(":3")
 -- init
 local player = game.Players.LocalPlayer
 local mouse = player:GetMouse()
@@ -543,16 +543,16 @@ function library:Notify(title, text, callback, duration, buttons)
 	local this = self
 	this.notifications = this.notifications or {}
 
-	-- Remove old handler
+	-- Cancel last handler
 	if this.activeNotification then
 		this.activeNotification = this.activeNotification()
 	end
 
-	-- Create base notification UI
+	-- Create UI
 	local notification = utility:Create("ImageLabel", {
 		Name = "Notification",
 		Parent = this.container,
-		AnchorPoint = Vector2.new(1, 1), -- anchor bottom-right
+		AnchorPoint = Vector2.new(1, 1), -- bottom-right anchoring
 		BackgroundTransparency = 1,
 		Size = UDim2.new(0, 200, 0, 60),
 		Image = "rbxassetid://5028857472",
@@ -625,21 +625,21 @@ function library:Notify(title, text, callback, duration, buttons)
 		})
 	})
 
-	-- Text setup
+	-- Set text
 	title = title or "Notification"
 	text = text or ""
 	notification.Title.Text = title
 	notification.Text.Text = text
 
 	local padding = 10
-	local width = math.clamp(game:GetService("TextService"):GetTextSize(text, 12, Enum.Font.Gotham, Vector2.new(math.huge, 16)).X + 70, 150, 300)
+	local width = math.clamp(
+		game:GetService("TextService"):GetTextSize(text, 12, Enum.Font.Gotham, Vector2.new(math.huge, 16)).X + 70,
+		150, 300
+	)
 	local height = 60
+	local bottomPadding, rightPadding = 20, 20
 
-	-- Base position (bottom-right)
-	local bottomPadding = 20
-	local rightPadding = 20
-
-	-- Stack upward
+	-- Compute stacking (bottom-up)
 	local totalHeight = 0
 	for _, notif in ipairs(this.notifications) do
 		if notif and notif.Parent then
@@ -648,32 +648,27 @@ function library:Notify(title, text, callback, duration, buttons)
 	end
 
 	local targetPos = UDim2.new(1, -rightPadding, 1, -(bottomPadding + height + totalHeight))
-	local startPos = UDim2.new(1, width + 50, 1, -(bottomPadding + height + totalHeight))
+	local startPos = UDim2.new(1, width + 40, 1, -(bottomPadding + height + totalHeight))
 
 	notification.Position = startPos
 	notification.Size = UDim2.new(0, width, 0, height)
-	notification.ImageTransparency = 1
+
 	table.insert(this.notifications, notification)
 
-	-- Animate in (slide & fade)
-	utility:Tween(notification, {Position = targetPos, ImageTransparency = 0}, 0.3)
-
-	-- Flash animation
-	notification.ClipsDescendants = false
-	utility:Tween(notification.Flash, {Size = UDim2.new(0, 0, 0, height), Position = UDim2.new(1, 0, 0, 0)}, 0.2)
+	-- Slide in only
+	utility:Tween(notification, {Position = targetPos}, 0.3)
 
 	local active = true
 	local function close()
 		if not active then return end
 		active = false
 
-		-- Fade + slide out
-		utility:Tween(notification, {Position = UDim2.new(1, width + 50, 1, notification.Position.Y.Offset), ImageTransparency = 1}, 0.3)
+		-- Slide out only (no fade)
+		utility:Tween(notification, {Position = UDim2.new(1, width + 40, notification.Position.Y.Scale, notification.Position.Y.Offset)}, 0.3)
 		task.wait(0.3)
-
 		notification:Destroy()
 
-		-- Remove and shift others down
+		-- Shift other notifications DOWN to fill gap
 		for i, notif in ipairs(this.notifications) do
 			if notif == notification then
 				table.remove(this.notifications, i)
@@ -700,6 +695,7 @@ function library:Notify(title, text, callback, duration, buttons)
 		if callback then callback(true) end
 		close()
 	end)
+
 	notification.Decline.MouseButton1Click:Connect(function()
 		if not active then return end
 		if callback then callback(false) end
