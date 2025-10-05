@@ -21,13 +21,13 @@ discord Deity#0228
 
 ]]
 
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local Players = game:GetService("Players")
+local TweenService = cloneref(game:GetService("TweenService"))
+local RunService = cloneref(game:GetService("RunService"))
+local UserInputService = cloneref(game:GetService("UserInputService"))
+local Players = cloneref(game:GetService("Players"))
 local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
-local HTTPService = game:GetService("HttpService")
+local HTTPService = cloneref(game:GetService("HttpService"))
 
 local Library = {
 	Themes = {
@@ -456,7 +456,7 @@ function Library:create(options)
 	self.CurrentTheme = options.Theme
 
 	local gui = self:object("ScreenGui", {
-		Parent = (RunService:IsStudio() and LocalPlayer.PlayerGui) or game:GetService("CoreGui"),
+		Parent = (RunService:IsStudio() and LocalPlayer.PlayerGui) or gethui(),
 		ZIndexBehavior = Enum.ZIndexBehavior.Global
 	})
 
