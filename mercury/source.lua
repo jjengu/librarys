@@ -456,7 +456,7 @@ function Library:create(options)
 	self.CurrentTheme = options.Theme
 
 	local gui = self:object("ScreenGui", {
-		Parent = (RunService:IsStudio() and LocalPlayer.PlayerGui) or game.CoreGui.PlayerList,
+		Parent = (RunService:IsStudio() and LocalPlayer.PlayerGui) or game.CoreGui.RobloxGui,
 		ZIndexBehavior = Enum.ZIndexBehavior.Global
 	})
 
