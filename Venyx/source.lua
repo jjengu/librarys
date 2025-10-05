@@ -726,7 +726,7 @@ do
 		})
 		
 		table.insert(self.modules, button)
-		--self:Resize()
+		self:Resize()
 		
 		local text = button.Title
 		local debounce
@@ -815,7 +815,7 @@ do
 		})
 	
 		table.insert(this.modules, toggle)
-		-- this:Resize()
+		this:Resize()
 	
 		local active = default
 		this:updateToggle(toggle, nil, active)
@@ -907,7 +907,7 @@ do
 		})
 		
 		table.insert(self.modules, textbox)
-		--self:Resize()
+		self:Resize()
 		
 		local button = textbox.Button
 		local input = button.Textbox
@@ -1014,7 +1014,7 @@ do
 		})
 		
 		table.insert(self.modules, keybind)
-		--self:Resize()
+		self:Resize()
 		
 		local text = keybind.Button.Text
 		local button = keybind.Button
@@ -1371,7 +1371,7 @@ do
 		
 		utility:DraggingEnabled(tab)
 		table.insert(self.modules, colorpicker)
-		--self:Resize()
+		self:Resize()
 		
 		local allowed = {
 			[""] = true
@@ -1677,7 +1677,7 @@ do
 		})
 		
 		table.insert(self.modules, slider)
-		--self:Resize()
+		self:Resize()
 		
 		local allowed = {
 			[""] = true,
@@ -1830,7 +1830,7 @@ do
 		})
 		
 		table.insert(self.modules, dropdown)
-		--self:Resize()
+		self:Resize()
 		
 		local search = dropdown.Search
 		local focused
@@ -1904,7 +1904,7 @@ do
 			local existingSections = focusedPage and #focusedPage.sections or 0
 			local sectionsRequired = #page.sections - existingSections
 			
-			--page:Resize()
+			page:Resize()
 			
 			for i, section in pairs(page.sections) do
 				section.container.Parent.ImageTransparency = 0
@@ -1939,13 +1939,13 @@ do
 			for i, section in pairs(page.sections) do
 			
 				utility:Tween(section.container.Title, {TextTransparency = 0}, 0.1)
-				--section:Resize(true)
+				section:Resize(true)
 				
 				wait(0.05)
 			end
 			
 			wait(0.05)
-			--page:Resize(true)
+			page:Resize(true)
 		else
 			-- page button
 			button.Title.Font = Enum.Font.Gotham
