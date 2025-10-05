@@ -540,164 +540,185 @@ do
 	
 	-- new modules
 function library:Notify(title, text, callback, duration, buttons)
-    local this = self
-    this.activeNotification = this.activeNotification or nil -- store the active notification
+	local this = self
+	this.notifications = this.notifications or {} -- store active notifications
 
-    -- If there's already an active notification, remove it
-    if this.activeNotification then
-        this.activeNotification:Destroy()
-    end
+	if this.activeNotification then
+		this.activeNotification = this.activeNotification()
+	end
 
-    -- Create UI for the new notification
-    local notification = utility:Create("ImageLabel", {
-        Name = "Notification",
-        Parent = this.container,
-        BackgroundTransparency = 1,
-        Size = UDim2.new(0, 200, 0, 60),
-        Image = "rbxassetid://5028857472",
-        ImageColor3 = themes.Background,
-        ScaleType = Enum.ScaleType.Slice,
-        SliceCenter = Rect.new(4, 4, 296, 296),
-        ZIndex = 3,
-        ClipsDescendants = true
-    }, {
-        utility:Create("ImageLabel", {
-            Name = "Flash",
-            Size = UDim2.new(1, 0, 1, 0),
-            BackgroundTransparency = 1,
-            Image = "rbxassetid://4641149554",
-            ImageColor3 = themes.TextColor,
-            ZIndex = 5
-        }),
-        utility:Create("ImageLabel", {
-            Name = "Glow",
-            BackgroundTransparency = 1,
-            Position = UDim2.new(0, -15, 0, -15),
-            Size = UDim2.new(1, 30, 1, 30),
-            ZIndex = 2,
-            Image = "rbxassetid://5028857084",
-            ImageColor3 = themes.Glow,
-            ScaleType = Enum.ScaleType.Slice,
-            SliceCenter = Rect.new(24, 24, 276, 276)
-        }),
-        utility:Create("TextLabel", {
-            Name = "Title",
-            BackgroundTransparency = 1,
-            Position = UDim2.new(0, 10, 0, 8),
-            Size = UDim2.new(1, -40, 0, 16),
-            ZIndex = 4,
-            Font = Enum.Font.GothamSemibold,
-            TextColor3 = themes.TextColor,
-            TextSize = 14,
-            TextXAlignment = Enum.TextXAlignment.Left
-        }),
-        utility:Create("TextLabel", {
-            Name = "Text",
-            BackgroundTransparency = 1,
-            Position = UDim2.new(0, 10, 1, -24),
-            Size = UDim2.new(1, -40, 0, 16),
-            ZIndex = 4,
-            Font = Enum.Font.Gotham,
-            TextColor3 = themes.TextColor,
-            TextSize = 12,
-            TextXAlignment = Enum.TextXAlignment.Left
-        }),
-        utility:Create("ImageButton", {
-            Name = "Accept",
-            BackgroundTransparency = 1,
-            Position = UDim2.new(1, -26, 0, 8),
-            Size = UDim2.new(0, 16, 0, 16),
-            Image = "rbxassetid://5012538259",
-            ImageColor3 = themes.TextColor,
-            ZIndex = 4,
-            Visible = buttons ~= false
-        }),
-        utility:Create("ImageButton", {
-            Name = "Decline",
-            BackgroundTransparency = 1,
-            Position = UDim2.new(1, -26, 1, -24),
-            Size = UDim2.new(0, 16, 0, 16),
-            Image = "rbxassetid://5012538583",
-            ImageColor3 = themes.TextColor,
-            ZIndex = 4,
-            Visible = buttons ~= false
-        })
-    })
+	-- Create UI
+	local notification = utility:Create("ImageLabel", {
+		Name = "Notification",
+		Parent = this.container,
+		BackgroundTransparency = 1,
+		Size = UDim2.new(0, 200, 0, 60),
+		Image = "rbxassetid://5028857472",
+		ImageColor3 = themes.Background,
+		ScaleType = Enum.ScaleType.Slice,
+		SliceCenter = Rect.new(4, 4, 296, 296),
+		ZIndex = 3,
+		ClipsDescendants = true
+	}, {
+		utility:Create("ImageLabel", {
+			Name = "Flash",
+			Size = UDim2.new(1, 0, 1, 0),
+			BackgroundTransparency = 1,
+			Image = "rbxassetid://4641149554",
+			ImageColor3 = themes.TextColor,
+			ZIndex = 5
+		}),
+		utility:Create("ImageLabel", {
+			Name = "Glow",
+			BackgroundTransparency = 1,
+			Position = UDim2.new(0, -15, 0, -15),
+			Size = UDim2.new(1, 30, 1, 30),
+			ZIndex = 2,
+			Image = "rbxassetid://5028857084",
+			ImageColor3 = themes.Glow,
+			ScaleType = Enum.ScaleType.Slice,
+			SliceCenter = Rect.new(24, 24, 276, 276)
+		}),
+		utility:Create("TextLabel", {
+			Name = "Title",
+			BackgroundTransparency = 1,
+			Position = UDim2.new(0, 10, 0, 8),
+			Size = UDim2.new(1, -40, 0, 16),
+			ZIndex = 4,
+			Font = Enum.Font.GothamSemibold,
+			TextColor3 = themes.TextColor,
+			TextSize = 14,
+			TextXAlignment = Enum.TextXAlignment.Left
+		}),
+		utility:Create("TextLabel", {
+			Name = "Text",
+			BackgroundTransparency = 1,
+			Position = UDim2.new(0, 10, 1, -24),
+			Size = UDim2.new(1, -40, 0, 16),
+			ZIndex = 4,
+			Font = Enum.Font.Gotham,
+			TextColor3 = themes.TextColor,
+			TextSize = 12,
+			TextXAlignment = Enum.TextXAlignment.Left
+		}),
+		utility:Create("ImageButton", {
+			Name = "Accept",
+			BackgroundTransparency = 1,
+			Position = UDim2.new(1, -26, 0, 8),
+			Size = UDim2.new(0, 16, 0, 16),
+			Image = "rbxassetid://5012538259",
+			ImageColor3 = themes.TextColor,
+			ZIndex = 4,
+			Visible = buttons ~= false
+		}),
+		utility:Create("ImageButton", {
+			Name = "Decline",
+			BackgroundTransparency = 1,
+			Position = UDim2.new(1, -26, 1, -24),
+			Size = UDim2.new(0, 16, 0, 16),
+			Image = "rbxassetid://5012538583",
+			ImageColor3 = themes.TextColor,
+			ZIndex = 4,
+			Visible = buttons ~= false
+		})
+	})
 
-    utility:DraggingEnabled(notification)
+	utility:DraggingEnabled(notification)
 
-    title = title or "Notification"
-    text = text or ""
+	title = title or "Notification"
+	text = text or ""
 
-    notification.Title.Text = title
-    notification.Text.Text = text
+	notification.Title.Text = title
+	notification.Text.Text = text
 
-    local padding = 10
-    local textSize = game:GetService("TextService"):GetTextSize(text, 12, Enum.Font.Gotham, Vector2.new(math.huge, 16))
-    local finalWidth = math.max(200, textSize.X + 70)
+	local padding = 10
+	local textSize = game:GetService("TextService"):GetTextSize(text, 12, Enum.Font.Gotham, Vector2.new(math.huge, 16))
+	local finalWidth = math.max(200, textSize.X + 70)
 
-    notification.Size = UDim2.new(0, 0, 0, 60)
+	notification.Size = UDim2.new(0, 0, 0, 60)
 
-    -- Set initial position off-screen to the right
-    notification.Position = UDim2.new(1, finalWidth + 50, 1, -(notification.AbsoluteSize.Y + screenPadding))
+	-- Calculate stacking position on the right side
+	local totalHeight = 0
+	for _, notif in ipairs(this.notifications) do
+		totalHeight += notif.AbsoluteSize.Y + padding
+	end
 
-    -- Slide in from right animation
-    utility:Tween(notification, {
-        Position = UDim2.new(1, -(finalWidth + screenPadding), 1, -(notification.AbsoluteSize.Y + screenPadding)),
-        Size = UDim2.new(0, finalWidth, 0, 60)
-    }, 0.25)
+	local screenPadding = 10
+	notification.Position = UDim2.new(1, -(finalWidth + screenPadding), 1, -(totalHeight + notification.AbsoluteSize.Y + screenPadding))
 
-    task.wait(0.25)
-    notification.ClipsDescendants = false
-    utility:Tween(notification.Flash, {
-        Size = UDim2.new(0, 0, 0, 60),
-        Position = UDim2.new(1, 0, 0, 0)
-    }, 0.2)
+	table.insert(this.notifications, notification)
 
-    -- Close handler
-    local active = true
-    local function close()
-        if not active then return end
-        active = false
+	notification.Position = UDim2.new(1, screenPadding, 1, -(totalHeight + notification.AbsoluteSize.Y + screenPadding))
+	utility:Tween(notification, {
+		Position = UDim2.new(1, -(finalWidth + screenPadding), 1, -(totalHeight + notification.AbsoluteSize.Y + screenPadding)),
+		Size = UDim2.new(0, finalWidth, 0, 60)
+	}, 0.25)
 
-        notification.ClipsDescendants = true
+	task.wait(0.25)
+	notification.ClipsDescendants = false
+	utility:Tween(notification.Flash, {
+		Size = UDim2.new(0, 0, 0, 60),
+		Position = UDim2.new(1, 0, 0, 0)
+	}, 0.2)
 
-        -- Slide out to the right
-        utility:Tween(notification, {
-            Position = notification.Position + UDim2.new(0, finalWidth + 50, 0, 0)
-        }, 0.25)
-        task.wait(0.25)
+	-- Close handler
+	local active = true
+	local function close()
+		if not active then return end
+		active = false
 
-        notification:Destroy()
+		notification.ClipsDescendants = true
 
-        this.activeNotification = nil
-    end
+		for i, notif in ipairs(this.notifications) do
+			if notif == notification then
+				table.remove(this.notifications, i)
+				break
+			end
+		end
 
-    -- Set the current active notification
-    this.activeNotification = notification
+		-- Slide out to the right
+		utility:Tween(notification, {
+			Position = notification.Position + UDim2.new(0, finalWidth + 50, 0, 0)
+		}, 0.25)
+		task.wait(0.25)
 
-    notification.Accept.MouseButton1Click:Connect(function()
-        if not active then return end
-        if callback then callback(true) end
-        close()
-    end)
+		notification:Destroy()
 
-    notification.Decline.MouseButton1Click:Connect(function()
-        if not active then return end
-        if callback then callback(false) end
-        close()
-    end)
+		-- Reposition remaining notifications downward
+		task.wait(0.05)
+		local currentY = -screenPadding
+		for _, notif in ipairs(this.notifications) do
+			utility:Tween(notif, {
+				Position = UDim2.new(1, -(notif.AbsoluteSize.X + screenPadding), 1, currentY - notif.AbsoluteSize.Y)
+			}, 0.25)
+			currentY -= notif.AbsoluteSize.Y + padding
+		end
+	end
 
-    if duration then
-        task.delay(duration, function()
-            if active then
-                if callback and buttons == false then
-                    callback(true)
-                end
-                close()
-            end
-        end)
-    end
+	this.activeNotification = close
+
+	notification.Accept.MouseButton1Click:Connect(function()
+		if not active then return end
+		if callback then callback(true) end
+		close()
+	end)
+
+	notification.Decline.MouseButton1Click:Connect(function()
+		if not active then return end
+		if callback then callback(false) end
+		close()
+	end)
+
+	if duration then
+		task.delay(duration, function()
+			if active then
+				if callback and buttons == false then
+					callback(true)
+				end
+				close()
+			end
+		end)
+	end
 end
 
 	function section:addButton(title, callback)
