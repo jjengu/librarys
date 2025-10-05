@@ -1981,7 +1981,7 @@ do
 	    self.container.CanvasSize = UDim2.new(0, 0, 0, size)
 	    
 	    pcall(function()
-	        self.container.ScrollBarImageTransparency = size > self.container.AbsoluteSize.Y
+	       	self.container.ScrollBarImageTransparency = (size > self.container.AbsoluteSize.Y) and 0 or 1
 	    end)
 	    
 	    if scroll then
