@@ -543,7 +543,6 @@ function library:Notify(title, text, callback, duration, buttons)
 	local this = self
 	this.notifications = this.notifications or {} -- store active notifications
 
-	-- Overwrite last activeNotification
 	if this.activeNotification then
 		this.activeNotification = this.activeNotification()
 	end
@@ -637,21 +636,31 @@ function library:Notify(title, text, callback, duration, buttons)
 	local finalWidth = math.max(200, textSize.X + 70)
 
 	notification.Size = UDim2.new(0, 0, 0, 60)
-	notification.Position = UDim2.new(0, padding, 1, -padding)
 
-	-- Stack positioning
+	-- Calculate stacking position on the right side
 	local totalHeight = 0
 	for _, notif in ipairs(this.notifications) do
 		totalHeight += notif.AbsoluteSize.Y + padding
 	end
-	notification.Position = UDim2.new(0, padding, 1, -(totalHeight + notification.AbsoluteSize.Y + padding))
+
+	local screenPadding = 10
+	notification.Position = UDim2.new(1, -(finalWidth + screenPadding), 1, -(totalHeight + notification.AbsoluteSize.Y + screenPadding))
 
 	table.insert(this.notifications, notification)
 
-	utility:Tween(notification, { Size = UDim2.new(0, finalWidth, 0, 60) }, 0.2)
-	task.wait(0.2)
+	-- Slide in from right animation
+	notification.Position = UDim2.new(1, screenPadding, 1, -(totalHeight + notification.AbsoluteSize.Y + screenPadding))
+	utility:Tween(notification, {
+		Position = UDim2.new(1, -(finalWidth + screenPadding), 1, -(totalHeight + notification.AbsoluteSize.Y + screenPadding)),
+		Size = UDim2.new(0, finalWidth, 0, 60)
+	}, 0.25)
+
+	task.wait(0.25)
 	notification.ClipsDescendants = false
-	utility:Tween(notification.Flash, { Size = UDim2.new(0, 0, 0, 60), Position = UDim2.new(1, 0, 0, 0) }, 0.2)
+	utility:Tween(notification.Flash, {
+		Size = UDim2.new(0, 0, 0, 60),
+		Position = UDim2.new(1, 0, 0, 0)
+	}, 0.2)
 
 	-- Close handler
 	local active = true
@@ -661,7 +670,6 @@ function library:Notify(title, text, callback, duration, buttons)
 
 		notification.ClipsDescendants = true
 
-		-- Remove from active list
 		for i, notif in ipairs(this.notifications) do
 			if notif == notification then
 				table.remove(this.notifications, i)
@@ -669,20 +677,21 @@ function library:Notify(title, text, callback, duration, buttons)
 			end
 		end
 
-		notification.Flash.Position = UDim2.new(0, 0, 0, 0)
-		utility:Tween(notification.Flash, { Size = UDim2.new(1, 0, 1, 0) }, 0.2)
-		task.wait(0.2)
-		utility:Tween(notification, { Size = UDim2.new(0, 0, 0, 60) }, 0.2)
-		task.wait(0.2)
+		-- Slide out to the right
+		utility:Tween(notification, {
+			Position = notification.Position + UDim2.new(0, finalWidth + 50, 0, 0)
+		}, 0.25)
+		task.wait(0.25)
+
 		notification:Destroy()
 
-		-- Reposition remaining notifications smoothly downward
+		-- Reposition remaining notifications downward
 		task.wait(0.05)
-		local currentY = -padding
+		local currentY = -screenPadding
 		for _, notif in ipairs(this.notifications) do
 			utility:Tween(notif, {
-				Position = UDim2.new(0, padding, 1, currentY - notif.AbsoluteSize.Y)
-			}, 0.2)
+				Position = UDim2.new(1, -(notif.AbsoluteSize.X + screenPadding), 1, currentY - notif.AbsoluteSize.Y)
+			}, 0.25)
 			currentY -= notif.AbsoluteSize.Y + padding
 		end
 	end
