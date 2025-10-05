@@ -8,7 +8,7 @@ ui now auto go s to the middle of the screen instead of where it used to
 fixed sliders on mobile
 fixed drag on mobile
 ]]
-print("/:3")
+print("/:3/")
 -- init
 local player = game.Players.LocalPlayer
 local mouse = player:GetMouse()
@@ -541,7 +541,12 @@ do
 	-- new modules
 function library:Notify(title, text, callback, duration, buttons)
 	local this = self
-	this.notifications = this.notifications or {} -- store active notifications
+
+	-- Overwrite last notification
+	if this.activeNotification then
+		this.activeNotification:Destroy()
+		this.activeNotification = nil
+	end
 
 	if this.activeNotification then
 		this.activeNotification = this.activeNotification()
