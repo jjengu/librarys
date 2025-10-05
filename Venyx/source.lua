@@ -8,7 +8,7 @@ ui now auto go s to the middle of the screen instead of where it used to
 fixed sliders on mobile
 fixed drag on mobile
 ]]
-print("aa13425234524a")
+print("bbbbbb")
 -- init
 local player = game.Players.LocalPlayer
 local mouse = player:GetMouse()
@@ -539,10 +539,14 @@ do
 	end
 	
 	-- new modules
+
 	function library:Notify(title, text, callback, duration, buttons)
 	local this = self
 
-	-- Overwrite last notification
+	-- Create notifications table if it doesn’t exist
+	this.notifications = this.notifications or {}
+
+	-- Destroy active notification if it exists
 	if this.activeNotification then
 		this.activeNotification = this.activeNotification()
 	end
@@ -557,7 +561,7 @@ do
 		ImageColor3 = themes.Background,
 		ScaleType = Enum.ScaleType.Slice,
 		SliceCenter = Rect.new(4, 4, 296, 296),
-		ZIndex = 3,
+		ZIndex = 10 + #this.notifications,
 		ClipsDescendants = true
 	}, {
 		utility:Create("ImageLabel", {
@@ -623,86 +627,81 @@ do
 		})
 	})
 
-	-- Drag
-	utility:DraggingEnabled(notification)
-
-	-- Position and text
+	-- Set text
 	title = title or "Notification"
 	text = text or ""
-
 	notification.Title.Text = title
 	notification.Text.Text = text
 
+	-- Calculate positions
 	local padding = 10
 	local textSize = game:GetService("TextService"):GetTextSize(text, 12, Enum.Font.Gotham, Vector2.new(math.huge, 16))
+	local screen = workspace.CurrentCamera.ViewportSize
 
-	-- Ensure notifications table exists
-	this.notifications = this.notifications or {}
+	local width = math.clamp(textSize.X + 70, 150, 300)
+	local height = 60
+	local baseX = screen.X - width - padding
 
-	-- Calculate Y offset (stacking)
+	-- Compute Y position (stack upward)
 	local totalHeight = 0
 	for _, notif in ipairs(this.notifications) do
 		if notif and notif.Parent then
 			totalHeight += notif.AbsoluteSize.Y + padding
 		end
 	end
+	local baseY = screen.Y - height - padding - totalHeight
 
-	-- Appear at bottom-right
-	local screen = workspace.CurrentCamera.ViewportSize
-	local baseX = screen.X - (textSize.X + 80) - padding
-	local baseY = screen.Y - (60 + padding + totalHeight)
-
-	notification.Position = UDim2.new(0, baseX + (textSize.X + 80), 0, baseY)
-	notification.Size = UDim2.new(0, 0, 0, 60)
-
+	-- Start off-screen and animate in
+	notification.Position = UDim2.new(0, screen.X, 0, baseY)
+	notification.Size = UDim2.new(0, width, 0, height)
 	table.insert(this.notifications, notification)
 
-	-- Animate in
-	utility:Tween(notification, {Position = UDim2.new(0, baseX, 0, baseY), Size = UDim2.new(0, textSize.X + 70, 0, 60)}, 0.25)
-	task.wait(0.25)
+	utility:Tween(notification, {Position = UDim2.new(0, baseX, 0, baseY)}, 0.25)
+	utility:Tween(notification, {ImageTransparency = 0}, 0.25)
 
+	-- Flash animation
 	notification.ClipsDescendants = false
 	utility:Tween(notification.Flash, {
-		Size = UDim2.new(0, 0, 0, 60),
+		Size = UDim2.new(0, 0, 0, height),
 		Position = UDim2.new(1, 0, 0, 0)
 	}, 0.2)
 
-	-- Close handler
 	local active = true
 	local function close()
 		if not active then return end
 		active = false
 
-		notification.ClipsDescendants = true
-
-		utility:Tween(notification.Flash, {Size = UDim2.new(1, 0, 1, 0)}, 0.2)
-		task.wait(0.2)
-
+		-- Slide out + fade
 		utility:Tween(notification, {
-			Position = UDim2.new(0, baseX + (textSize.X + 80), 0, baseY),
-			Size = UDim2.new(0, 0, 0, 60)
+			Position = UDim2.new(0, screen.X, 0, baseY),
+			ImageTransparency = 1
 		}, 0.25)
 		task.wait(0.25)
 
 		notification:Destroy()
 
-		-- Remove from stack and shift others down
+		-- Remove and shift DOWN other notifications
 		for i, notif in ipairs(this.notifications) do
 			if notif == notification then
 				table.remove(this.notifications, i)
 				break
 			end
 		end
-		for _, notif in ipairs(this.notifications) do
+
+		for i, notif in ipairs(this.notifications) do
 			if notif and notif.Parent then
-				utility:Tween(notif, {Position = notif.Position + UDim2.new(0, 0, 0, 70)}, 0.2)
+				local targetY = screen.Y - height - padding
+				for j = 1, i - 1 do
+					targetY -= (this.notifications[j].AbsoluteSize.Y + padding)
+				end
+				utility:Tween(notif, {Position = UDim2.new(0, baseX, 0, targetY)}, 0.25)
 			end
 		end
 	end
 
 	this.activeNotification = close
 
-	-- Button click handlers
+	-- Button logic
 	notification.Accept.MouseButton1Click:Connect(function()
 		if not active then return end
 		if callback then callback(true) end
@@ -715,7 +714,7 @@ do
 		close()
 	end)
 
-	-- Auto close after duration
+	-- Auto close
 	if duration then
 		task.delay(duration, function()
 			if active then
@@ -727,7 +726,8 @@ do
 		end)
 	end
 end
-		
+
+	
 	function section:addButton(title, callback)
 		local button = utility:Create("ImageButton", {
 			Name = "Button",
