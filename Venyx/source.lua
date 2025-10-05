@@ -772,7 +772,7 @@ do
 			ImageColor3 = themes.DarkContrast,
 			ScaleType = Enum.ScaleType.Slice,
 			SliceCenter = Rect.new(2, 2, 298, 298)
-		},{
+		}, {
 			utility:Create("TextLabel", {
 				Name = "Title",
 				AnchorPoint = Vector2.new(0, 0.5),
@@ -784,7 +784,7 @@ do
 				Text = title,
 				TextColor3 = themes.TextColor,
 				TextSize = 12,
-				TextTransparency = 0.10000000149012,
+				TextTransparency = 0.1,
 				TextXAlignment = Enum.TextXAlignment.Left
 			}),
 			utility:Create("ImageLabel", {
@@ -812,25 +812,45 @@ do
 				})
 			})
 		})
-		
+	
 		table.insert(self.modules, toggle)
-		--self:Resize()
-		
+		-- self:Resize()
+	
 		local active = default
 		self:updateToggle(toggle, nil, active)
-		
+	
 		toggle.MouseButton1Click:Connect(function()
 			active = not active
 			self:updateToggle(toggle, nil, active)
-			
+	
 			if callback then
 				callback(active, function(...)
 					self:updateToggle(toggle, ...)
 				end)
 			end
 		end)
-		
-		return toggle
+	
+		-- Wrap the toggle with control methods
+		local object = {}
+	
+		function object:set(value)
+			active = value
+			self:updateToggle(toggle, nil, active)
+	
+			if callback then
+				callback(active, function(...)
+					self:updateToggle(toggle, ...)
+				end)
+			end
+		end
+	
+		function object:get()
+			return active
+		end
+	
+		object.Instance = toggle
+	
+		return object
 	end
 	
 	function section:addTextbox(title, default, callback)
