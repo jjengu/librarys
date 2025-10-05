@@ -8,7 +8,7 @@ ui now auto go s to the middle of the screen instead of where it used to
 fixed sliders on mobile
 fixed drag on mobile
 ]]
-print("/:3/")
+print("/:3//")
 -- init
 local player = game.Players.LocalPlayer
 local mouse = player:GetMouse()
@@ -636,11 +636,14 @@ do
 
 	local padding = 10
 	local textSize = game:GetService("TextService"):GetTextSize(text, 12, Enum.Font.Gotham, Vector2.new(math.huge, 16))
+	local finalWidth = math.max(200, textSize.X + 70)
+	local screenPadding = 10
 
-	notification.Position = UDim2.new(0, padding, 1, -(notification.AbsoluteSize.Y + padding))
+	-- Set position on the bottom-right
+	notification.Position = UDim2.new(1, -(finalWidth + screenPadding), 1, -(notification.AbsoluteSize.Y + screenPadding))
 	notification.Size = UDim2.new(0, 0, 0, 60)
 
-	utility:Tween(notification, {Size = UDim2.new(0, textSize.X + 70, 0, 60)}, 0.2)
+	utility:Tween(notification, {Size = UDim2.new(0, finalWidth, 0, 60)}, 0.2)
 	task.wait(0.2)
 
 	notification.ClipsDescendants = false
@@ -663,7 +666,7 @@ do
 
 		utility:Tween(notification, {
 			Size = UDim2.new(0, 0, 0, 60),
-			Position = notification.Position + UDim2.new(0, textSize.X + 70, 0, 0)
+			Position = notification.Position + UDim2.new(0, finalWidth, 0, 0)
 		}, 0.2)
 		task.wait(0.2)
 
@@ -690,13 +693,14 @@ do
 		task.delay(duration, function()
 			if active then
 				if callback and buttons == false then
-					callback(true) -- simulate accept for non-interactive message
+					callback(true)
 				end
 				close()
 			end
 		end)
 	end
 end
+
 
 	function section:addButton(title, callback)
 		local button = utility:Create("ImageButton", {
