@@ -541,6 +541,14 @@ do
 	-- new modules
 	
 	function library:Notify(title, text, callback, duration, buttons)
+	local this = self
+
+	-- Overwrite last notification
+	if this.activeNotification then
+		this.activeNotification = this.activeNotification()
+	end
+
+	function library:Notify(title, text, callback, duration, buttons)
 		local this = self
 	
 		-- Overwrite last notification
@@ -637,11 +645,30 @@ do
 		local padding = 10
 		local textSize = game:GetService("TextService"):GetTextSize(text, 12, Enum.Font.Gotham, Vector2.new(math.huge, 16))
 	
-		notification.Position = this.lastNotification or UDim2.new(0, padding, 1, -(notification.AbsoluteSize.Y + padding))
+		-- Ensure notifications table exists
+		this.notifications = this.notifications or {}
+	
+		-- Calculate Y offset (stacking)
+		local totalHeight = 0
+		for _, notif in ipairs(this.notifications) do
+			if notif and notif.Parent then
+				totalHeight += notif.AbsoluteSize.Y + padding
+			end
+		end
+	
+		-- Appear at bottom-right
+		local screen = workspace.CurrentCamera.ViewportSize
+		local baseX = screen.X - (textSize.X + 80) - padding
+		local baseY = screen.Y - (60 + padding + totalHeight)
+	
+		notification.Position = UDim2.new(0, baseX + (textSize.X + 80), 0, baseY)
 		notification.Size = UDim2.new(0, 0, 0, 60)
 	
-		utility:Tween(notification, {Size = UDim2.new(0, textSize.X + 70, 0, 60)}, 0.2)
-		task.wait(0.2)
+		table.insert(this.notifications, notification)
+	
+		-- Animate in
+		utility:Tween(notification, {Position = UDim2.new(0, baseX, 0, baseY), Size = UDim2.new(0, textSize.X + 70, 0, 60)}, 0.25)
+		task.wait(0.25)
 	
 		notification.ClipsDescendants = false
 		utility:Tween(notification.Flash, {
@@ -656,19 +683,30 @@ do
 			active = false
 	
 			notification.ClipsDescendants = true
-			this.lastNotification = notification.Position
 	
-			notification.Flash.Position = UDim2.new(0, 0, 0, 0)
 			utility:Tween(notification.Flash, {Size = UDim2.new(1, 0, 1, 0)}, 0.2)
 			task.wait(0.2)
 	
 			utility:Tween(notification, {
-				Size = UDim2.new(0, 0, 0, 60),
-				Position = notification.Position + UDim2.new(0, textSize.X + 70, 0, 0)
-			}, 0.2)
-			task.wait(0.2)
+				Position = UDim2.new(0, baseX + (textSize.X + 80), 0, baseY),
+				Size = UDim2.new(0, 0, 0, 60)
+			}, 0.25)
+			task.wait(0.25)
 	
 			notification:Destroy()
+	
+			-- Remove from stack and shift others down
+			for i, notif in ipairs(this.notifications) do
+				if notif == notification then
+					table.remove(this.notifications, i)
+					break
+				end
+			end
+			for _, notif in ipairs(this.notifications) do
+				if notif and notif.Parent then
+					utility:Tween(notif, {Position = notif.Position + UDim2.new(0, 0, 0, 70)}, 0.2)
+				end
+			end
 		end
 	
 		this.activeNotification = close
@@ -691,14 +729,14 @@ do
 			task.delay(duration, function()
 				if active then
 					if callback and buttons == false then
-						callback(true) -- simulate accept for non-interactive message
+						callback(true)
 					end
 					close()
 				end
 			end)
 		end
 	end
-	
+		
 	function section:addButton(title, callback)
 		local button = utility:Create("ImageButton", {
 			Name = "Button",
