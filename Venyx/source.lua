@@ -1969,22 +1969,24 @@ do
 	end
 	
 	function page:Resize(scroll)
-		local padding = 10
-		local size = 0
-		
-		for i, section in pairs(self.sections) do
-			size = size + section.container.Parent.AbsoluteSize.Y + padding
-		end
-		
-		self.container.CanvasSize = UDim2.new(0, 0, 0, size)
-		
-		pcall(function()
-			self.container.ScrollBarImageTransparency = size > self.container.AbsoluteSize.Y
-		end)
-		
-		if scroll then
-			utility:Tween(self.container, {CanvasPosition = Vector2.new(0, self.lastPosition or 0)}, 0.2)
-		end
+	    local padding = 10
+	    local size = 0
+	    
+	    for i, section in pairs(self.sections) do
+	        local parent = section.container and section.container.Parent
+	        local ySize = parent and parent.AbsoluteSize and parent.AbsoluteSize.Y or 0
+	        size = size + ySize + padding
+	    end
+	    
+	    self.container.CanvasSize = UDim2.new(0, 0, 0, size)
+	    
+	    pcall(function()
+	        self.container.ScrollBarImageTransparency = size > self.container.AbsoluteSize.Y
+	    end)
+	    
+	    if scroll then
+	        utility:Tween(self.container, {CanvasPosition = Vector2.new(0, self.lastPosition or 0)}, 0.2)
+	    end
 	end
 
 	function section:Resize(smooth)
