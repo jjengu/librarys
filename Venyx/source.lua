@@ -539,17 +539,13 @@ do
 	end
 	
 	-- new modules
-function library:Notify(title, text, callback, duration, buttons)
+	function library:Notify(title, text, callback, duration, buttons)
 	local this = self
 
-	-- Overwrite last notification
+	-- Delete previous notification if it exists
 	if this.activeNotification then
-		this.activeNotification:Destroy()
+		this.activeNotification()
 		this.activeNotification = nil
-	end
-
-	if this.activeNotification then
-		this.activeNotification = this.activeNotification()
 	end
 
 	-- Create UI
@@ -628,8 +624,10 @@ function library:Notify(title, text, callback, duration, buttons)
 		})
 	})
 
+	-- Drag
 	utility:DraggingEnabled(notification)
 
+	-- Position and text
 	title = title or "Notification"
 	text = text or ""
 
@@ -638,28 +636,13 @@ function library:Notify(title, text, callback, duration, buttons)
 
 	local padding = 10
 	local textSize = game:GetService("TextService"):GetTextSize(text, 12, Enum.Font.Gotham, Vector2.new(math.huge, 16))
-	local finalWidth = math.max(200, textSize.X + 70)
 
+	notification.Position = UDim2.new(0, padding, 1, -(notification.AbsoluteSize.Y + padding))
 	notification.Size = UDim2.new(0, 0, 0, 60)
 
-	-- Calculate stacking position on the right side
-	local totalHeight = 0
-	for _, notif in ipairs(this.notifications) do
-		totalHeight += notif.AbsoluteSize.Y + padding
-	end
+	utility:Tween(notification, {Size = UDim2.new(0, textSize.X + 70, 0, 60)}, 0.2)
+	task.wait(0.2)
 
-	local screenPadding = 10
-	notification.Position = UDim2.new(1, -(finalWidth + screenPadding), 1, -(totalHeight + notification.AbsoluteSize.Y + screenPadding))
-
-	table.insert(this.notifications, notification)
-
-	notification.Position = UDim2.new(1, screenPadding, 1, -(totalHeight + notification.AbsoluteSize.Y + screenPadding))
-	utility:Tween(notification, {
-		Position = UDim2.new(1, -(finalWidth + screenPadding), 1, -(totalHeight + notification.AbsoluteSize.Y + screenPadding)),
-		Size = UDim2.new(0, finalWidth, 0, 60)
-	}, 0.25)
-
-	task.wait(0.25)
 	notification.ClipsDescendants = false
 	utility:Tween(notification.Flash, {
 		Size = UDim2.new(0, 0, 0, 60),
@@ -674,34 +657,22 @@ function library:Notify(title, text, callback, duration, buttons)
 
 		notification.ClipsDescendants = true
 
-		for i, notif in ipairs(this.notifications) do
-			if notif == notification then
-				table.remove(this.notifications, i)
-				break
-			end
-		end
+		notification.Flash.Position = UDim2.new(0, 0, 0, 0)
+		utility:Tween(notification.Flash, {Size = UDim2.new(1, 0, 1, 0)}, 0.2)
+		task.wait(0.2)
 
-		-- Slide out to the right
 		utility:Tween(notification, {
-			Position = notification.Position + UDim2.new(0, finalWidth + 50, 0, 0)
-		}, 0.25)
-		task.wait(0.25)
+			Size = UDim2.new(0, 0, 0, 60),
+			Position = notification.Position + UDim2.new(0, textSize.X + 70, 0, 0)
+		}, 0.2)
+		task.wait(0.2)
 
 		notification:Destroy()
-
-		-- Reposition remaining notifications downward
-		task.wait(0.05)
-		local currentY = -screenPadding
-		for _, notif in ipairs(this.notifications) do
-			utility:Tween(notif, {
-				Position = UDim2.new(1, -(notif.AbsoluteSize.X + screenPadding), 1, currentY - notif.AbsoluteSize.Y)
-			}, 0.25)
-			currentY -= notif.AbsoluteSize.Y + padding
-		end
 	end
 
 	this.activeNotification = close
 
+	-- Button click handlers
 	notification.Accept.MouseButton1Click:Connect(function()
 		if not active then return end
 		if callback then callback(true) end
@@ -714,11 +685,12 @@ function library:Notify(title, text, callback, duration, buttons)
 		close()
 	end)
 
+	-- Auto close after duration
 	if duration then
 		task.delay(duration, function()
 			if active then
 				if callback and buttons == false then
-					callback(true)
+					callback(true) -- simulate accept for non-interactive message
 				end
 				close()
 			end
