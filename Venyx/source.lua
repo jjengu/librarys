@@ -759,11 +759,13 @@ do
 		
 		return button
 	end
-	
+
 	function section:addToggle(title, default, callback)
+		local this = self -- Capture the section reference
+	
 		local toggle = utility:Create("ImageButton", {
 			Name = "Toggle",
-			Parent = self.container,
+			Parent = this.container,
 			BackgroundTransparency = 1,
 			BorderSizePixel = 0,
 			Size = UDim2.new(1, 0, 0, 30),
@@ -813,33 +815,32 @@ do
 			})
 		})
 	
-		table.insert(self.modules, toggle)
-		-- self:Resize()
+		table.insert(this.modules, toggle)
+		-- this:Resize()
 	
 		local active = default
-		self:updateToggle(toggle, nil, active)
+		this:updateToggle(toggle, nil, active)
 	
 		toggle.MouseButton1Click:Connect(function()
 			active = not active
-			self:updateToggle(toggle, nil, active)
+			this:updateToggle(toggle, nil, active)
 	
 			if callback then
 				callback(active, function(...)
-					self:updateToggle(toggle, ...)
+					this:updateToggle(toggle, ...)
 				end)
 			end
 		end)
 	
-		-- Wrap the toggle with control methods
 		local object = {}
 	
 		function object:set(value)
 			active = value
-			self:updateToggle(toggle, nil, active)
+			this:updateToggle(toggle, nil, active)
 	
 			if callback then
 				callback(active, function(...)
-					self:updateToggle(toggle, ...)
+					this:updateToggle(toggle, ...)
 				end)
 			end
 		end
@@ -852,7 +853,7 @@ do
 	
 		return object
 	end
-	
+
 	function section:addTextbox(title, default, callback)
 		local textbox = utility:Create("ImageButton", {
 			Name = "Textbox",
