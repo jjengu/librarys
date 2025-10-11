@@ -8,7 +8,7 @@ ui now auto go s to the middle of the screen instead of where it used to
 fixed sliders on mobile
 fixed drag on mobile
 ]]
-print("/:3//")
+print("/:3/dagadgag/")
 -- init
 local player = game.Players.LocalPlayer
 local mouse = player:GetMouse()
