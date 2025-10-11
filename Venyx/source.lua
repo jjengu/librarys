@@ -497,9 +497,9 @@ do
 			end
 		end
 	end
-	
+	getgenv().VenyxToggle = false
 	function library:toggle()
-	
+		getgenv().VenyxToggle = not getgenv().VenyxToggle
 		if self.toggling then
 			return
 		end
@@ -2243,6 +2243,7 @@ end
 
 	task.spawn(function()
 		while task.wait() do
+			if getgenv().VenyxToggle then return end
 			UpdateSize(main)
 			-- do this if u want it to resize based on screenzie idk if it alooks well on mobile # jengu
 		end
