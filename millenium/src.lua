@@ -562,7 +562,7 @@
             }); 
 
             local items = cfg.items; do
-                getgenv().maini = items[ "main" ] = library:create( "Frame" , {
+                items[ "main" ] = library:create( "Frame" , {
                     Parent = library[ "items" ];
                     Size = cfg.size;
                     Name = "main";
@@ -576,6 +576,8 @@
                     Parent = items[ "main" ];
                     CornerRadius = dim(0, 10)
                 });
+
+				getgenv().maini = items[ "main" ]
 
 				getgenv().uiscale = library:create( "UIScale" , {
                     Parent = getgenv().maini
