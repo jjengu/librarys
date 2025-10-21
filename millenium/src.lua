@@ -578,7 +578,7 @@
                 });
 
 				getgenv().uiscale = library:create( "UIScale" , {
-                    Parent = library[ "items" ]
+                    Parent = items[ "main" ]
                 });
                 
                 library:create( "UIStroke" , {
