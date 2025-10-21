@@ -291,7 +291,7 @@
             return (y_cond and x_cond)
         end
 
-        function library:draggify(frame)
+        --[[function library:draggify(frame)
             local dragging = false 
             local start_size = frame.Position
             local start 
@@ -334,7 +334,46 @@
                     library:close_element()
                 end
             end)
-        end 
+        end ]]
+
+		function library:draggify(frame)
+			local dragging = false
+			local start_size = frame.Position
+			local start
+
+			local function get_input_pos(input)
+				return input.Position
+			end
+
+			frame.InputBegan:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+					dragging = true
+					start = get_input_pos(input)
+					start_size = frame.Position
+				end
+			end)
+
+			frame.InputEnded:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+					dragging = false
+				end
+			end)
+
+			library:connection(uis.InputChanged, function(input, game_event)
+				if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+					
+					local current_position = dim2(
+						0,
+						start_size.X.Offset + (get_input_pos(input).X - start.X),
+						0,
+						start_size.Y.Offset + (get_input_pos(input).Y - start.Y)
+					)
+
+					library:tween(frame, {Position = current_position}, Enum.EasingStyle.Linear, 0.05)
+					library:close_element()
+				end
+			end)
+		end
 
         function library:convert(str)
             local values = {}
