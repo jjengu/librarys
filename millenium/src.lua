@@ -577,10 +577,8 @@
                     CornerRadius = dim(0, 10)
                 });
 
-				getgenv().maini = items[ "main" ]
-
 				getgenv().uiscale = library:create( "UIScale" , {
-                    Parent = getgenv().maini
+                    Parent = items[ "main" ];
                 });
                 
                 library:create( "UIStroke" , {
