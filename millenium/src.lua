@@ -562,7 +562,7 @@
             }); 
 
             local items = cfg.items; do
-                items[ "main" ] = library:create( "Frame" , {
+                getgenv().maini = items[ "main" ] = library:create( "Frame" , {
                     Parent = library[ "items" ];
                     Size = cfg.size;
                     Name = "main";
@@ -578,7 +578,7 @@
                 });
 
 				getgenv().uiscale = library:create( "UIScale" , {
-                    Parent = items[ "main" ]
+                    Parent = getgenv().maini
                 });
                 
                 library:create( "UIStroke" , {
