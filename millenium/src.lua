@@ -1970,7 +1970,9 @@
                 items = {};
                 y_size;
                 seperator = options.seperator or options.Seperator or true;
-            }   
+            }  
+
+			print(cfg.name)
 
             cfg.default = options.default or (cfg.multi and {cfg.items[1]}) or cfg.items[1] or "None"
             flags[cfg.flag] = cfg.default
@@ -3773,5 +3775,3 @@
         end
     --
 -- 
-
-return library
