@@ -262,7 +262,7 @@
                         )
                     )
 
-                    library:tween(frame, {Size = current_size}, Enum.EasingStyle.Linear, 0)
+                    library:tween(frame, {Size = current_size}, Enum.EasingStyle.Linear, 0.05)
                 end
             end)
         end 
@@ -576,6 +576,10 @@
                     Parent = items[ "main" ];
                     CornerRadius = dim(0, 10)
                 });
+
+				getgenv().uiscale = library:create( "UIScale" , {
+                    Parent = library[ "items" ]
+                });
                 
                 library:create( "UIStroke" , {
                     Color = rgb(23, 23, 29);
@@ -784,6 +788,10 @@
                 
             return setmetatable(cfg, library)
         end 
+
+		function library:scale(size)
+			uiscale.Scale = tonumber(size)
+		end
 
         function library:tab(properties)
             local cfg = {
