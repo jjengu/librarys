@@ -330,7 +330,7 @@
                         )
                     )
 
-                    library:tween(frame, {Position = current_position}, Enum.EasingStyle.Linear, 0.05)
+                    library:tween(frame, {Position = current_position}, Enum.EasingStyle.Linear, 0)
                     library:close_element()
                 end
             end)
@@ -369,7 +369,7 @@
 						start_size.Y.Offset + (get_input_pos(input).Y - start.Y)
 					)
 
-					library:tween(frame, {Position = current_position}, Enum.EasingStyle.Linear, 0.05)
+					library:tween(frame, {Position = current_position}, Enum.EasingStyle.Linear, 0)
 					library:close_element()
 				end
 			end)
