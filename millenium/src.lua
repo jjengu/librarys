@@ -262,7 +262,7 @@
                         )
                     )
 
-                    library:tween(frame, {Size = current_size}, Enum.EasingStyle.Linear, 0.05)
+                    library:tween(frame, {Size = current_size}, Enum.EasingStyle.Linear, 0)
                 end
             end)
         end 
