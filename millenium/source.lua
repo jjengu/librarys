@@ -580,6 +580,8 @@
 				getgenv().uiscale = library:create( "UIScale" , {
                     Parent = items[ "main" ];
                 });
+
+				getgenv().mil = items[ "main" ]
                 
                 library:create( "UIStroke" , {
                     Color = rgb(23, 23, 29);
