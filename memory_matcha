@@ -1,0 +1,42 @@
+local offsets = game:HttpGet("https://offsets-proxy.vercel.app/api/getOffsets")
+local primitive_offset = tonumber(offsets:match("BasePart::Primitive%s*=%s*(0x[%x]+)"), 16)
+local flags_offset = tonumber(offsets:match("BasePart::PrimitiveFlags%s*=%s*(0x[%x]+)"), 16)
+local cantouch_mask = tonumber(offsets:match("PrimitiveFlags::CanTouch%s*=%s*(0x[%x]+)"), 16)
+local animationId_offset = tonumber(offsets:match("Misc::AnimationId%s*=%s*(0x[%x]+)"), 16)
+
+Utils = {}
+
+function Utils.readCanTouch(part)
+    local primitive = memory_read("uintptr_t", part.Address + primitive_offset)
+    local flags = memory_read("byte", primitive + flags_offset)
+    return bit32.band(flags, cantouch_mask) ~= 0
+end
+
+function Utils.writeCanTouch(part, state)
+    local primitive = memory_read("uintptr_t", part.Address + primitive_offset)
+    local flags = memory_read("byte", primitive + flags_offset)
+    if state then
+        flags = bit32.bor(flags, cantouch_mask)
+    else
+        flags = bit32.band(flags, bit32.bnot(cantouch_mask))
+    end
+    memory_write("byte", primitive + flags_offset, flags)
+end
+
+function Utils.readAnimationId(animation)
+    local address = animation.Address + animationId_offset
+    local pointer = memory_read("uintptr_t", address)
+    if pointer == 0 then return nil end
+    local id = memory_read("string", pointer)
+    return id
+end
+
+function Utils.writeAnimationId(animation, newId)
+    local address = animation.Address + animationId_offset
+    local pointer = memory_read("uintptr_t", address)
+    if pointer == 0 then return false end
+    memory_write("string", pointer, tostring(newId))
+    return true
+end
+
+return Utils
