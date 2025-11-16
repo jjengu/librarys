@@ -1,8 +1,8 @@
 local offsets = game:HttpGet("https://offsets-proxy.vercel.app/api/getOffsets")
-local primitive_offset = offsets:match("BasePart::Primitive%s*=%s*(0x[%x]+)")
-local flags_offset = offsets:match("BasePart::PrimitiveFlags%s*=%s*(0x[%x]+)")
-local cantouch_mask = offsets:match("PrimitiveFlags::CanTouch%s*=%s*(0x[%x]+)")
-local animationId_offset = offsets:match("Misc::AnimationId%s*=%s*(0x[%x]+)")
+local primitive_offset = tonumber(offsets:match("BasePart::Primitive%s*=%s*(0x[%x]+)"), 16)
+local flags_offset = tonumber(offsets:match("BasePart::PrimitiveFlags%s*=%s*(0x[%x]+)"), 16)
+local cantouch_mask = tonumber(offsets:match("PrimitiveFlags::CanTouch%s*=%s*(0x[%x]+)"), 16)
+local animationId_offset = tonumber(offsets:match("Misc::AnimationId%s*=%s*(0x[%x]+)"), 16)
 
 Utils = {}
 
