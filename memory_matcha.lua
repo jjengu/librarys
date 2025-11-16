@@ -46,7 +46,6 @@ function Utils.writeAnimationId(animation, newId)
     end
 
     memory_write("string", pointer, "http://www.roblox.com/asset/?id="..newId)
-    return true
 end
 
 _G.functions = Utils
