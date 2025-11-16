@@ -36,16 +36,8 @@ function Utils.writeAnimationId(animation, newId)
     local pointer = memory_read("uintptr_t", address)
     if pointer == 0 then return false end
 
-    if type(newId) == "number" then
-        newId = tostring(newId)
-    elseif type(newId) == "string" then
-        local idNumber = newId:match("id=(%d+)")
-        if idNumber then
-            newId = idNumber
-        end
-    end
-
-    memory_write("string", pointer, "http://www.roblox.com/asset/?id="..newId)
+    memory_write("string", pointer, newId)
+    return true
 end
 
 _G.functions = Utils
