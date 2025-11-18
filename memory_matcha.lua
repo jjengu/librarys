@@ -24,7 +24,7 @@ function Utils.writeCanTouch(part, state)
     memory_write("byte", primitive + flags_offset, flags)
 end
 
-local function Utils.readJump(humanoid)
+function Utils.readJump(humanoid)
     local jump_state = memory_read("byte", humanoid.Address + jump_offset)
     return jump_state ~= 0
 end
