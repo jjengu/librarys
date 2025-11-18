@@ -3,6 +3,7 @@ local primitive_offset = tonumber(offsets:match("BasePart::Primitive%s*=%s*(0x[%
 local flags_offset = tonumber(offsets:match("BasePart::PrimitiveFlags%s*=%s*(0x[%x]+)"), 16)
 local cantouch_mask = tonumber(offsets:match("PrimitiveFlags::CanTouch%s*=%s*(0x[%x]+)"), 16)
 local animationId_offset = tonumber(offsets:match("Misc::AnimationId%s*=%s*(0x[%x]+)"), 16)
+local jump_offset = tonumber(offsets:match("Humanoid::Jump%s*=%s*(0x[%x]+)"), 16)
 
 Utils = {}
 
@@ -21,6 +22,11 @@ function Utils.writeCanTouch(part, state)
         flags = bit32.band(flags, bit32.bnot(cantouch_mask))
     end
     memory_write("byte", primitive + flags_offset, flags)
+end
+
+local function Utils.readJump(humanoid)
+    local jump_state = memory_read("byte", humanoid.Address + jump_offset)
+    return jump_state ~= 0
 end
 
 function Utils.readAnimationId(animation)
