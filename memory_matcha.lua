@@ -40,4 +40,4 @@ function Utils.writeAnimationId(animation, newId)
     return true
 end
 
-_G.functions = Utils
+_G.Utils = Utils
