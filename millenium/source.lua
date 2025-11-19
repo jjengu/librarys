@@ -7,19 +7,19 @@
 ]]
 
 -- Variables 
-    local uis = game:GetService("UserInputService") 
-    local players = game:GetService("Players") 
-    local ws = game:GetService("Workspace")
-    local rs = game:GetService("ReplicatedStorage")
-    local http_service = game:GetService("HttpService")
-    local gui_service = game:GetService("GuiService")
-    local lighting = game:GetService("Lighting")
-    local run = game:GetService("RunService")
-    local stats = game:GetService("Stats")
-    local coregui = game:GetService("CoreGui")
-    local debris = game:GetService("Debris")
-    local tween_service = game:GetService("TweenService")
-    local sound_service = game:GetService("SoundService")
+    local uis = cloneref(game:GetService("UserInputService"))
+    local players = cloneref(game:GetService("Players"))
+    local ws = cloneref(game:GetService("Workspace"))
+    local rs = cloneref(game:GetService("ReplicatedStorage"))
+    local http_service = cloneref(game:GetService("HttpService"))
+    local gui_service = cloneref(game:GetService("GuiService"))
+    local lighting = cloneref(game:GetService("Lighting"))
+    local run = cloneref(game:GetService("RunService"))
+    local stats = cloneref(game:GetService("Stats"))
+    local coregui = cloneref(game:GetService("CoreGui"))
+    local debris = cloneref(game:GetService("Debris"))
+    local tween_service = cloneref(game:GetService("TweenService"))
+    local sound_service = cloneref(game:GetService("SoundService"))
 
     local vec2 = Vector2.new
     local vec3 = Vector3.new
